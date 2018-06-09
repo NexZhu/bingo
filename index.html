@@ -1,0 +1,156 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0"/>
+  <title>Bingo Game</title>
+</head>
+
+<body>
+
+<div id="info">
+  <label for="name">姓名</label>
+  <input id="name" type="text">
+  <button>确定</button>
+</div>
+
+<div id="container">
+  <table>
+    <tr>
+      <th>B</th>
+      <th>I</th>
+      <th>N</th>
+      <th>G</th>
+      <th>O</th>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td id="free">FREE</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    padding: 10px;
+  }
+
+  #info {
+    margin-bottom: 10px;
+  }
+
+  #info * {
+    font-size: 20px;
+  }
+
+  #info input {
+    width: 50%;
+    border: 1px solid black;
+  }
+
+  #container {
+    width: 100%;
+    border-left: 10px solid black;
+    border-right: 10px solid black;
+    border-bottom: 10px solid black;
+  }
+
+  table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+  }
+
+  th, td {
+    border: 1px solid black;
+    padding: 0;
+  }
+
+  tr:first-of-type {
+    background: black;
+    color: white;
+  }
+
+  #free {
+    font-size: 24px;
+  }
+</style>
+
+<script src="https://cdn.bootcss.com/fetch/2.0.4/fetch.min.js"></script>
+<script>
+  window.onload = () => {
+    const button = document.querySelector('button')
+    const nameBox = document.querySelector('#name')
+    const container = document.querySelector('#container')
+    container.style.height = container.offsetWidth / 5 * 6
+    button.addEventListener('click', () => {
+      const name = nameBox.value
+      if (!name) {
+        alert('请填写您的姓名！')
+        return
+      }
+      fetch('http://ho.internetapi.cn:2914', {
+//      fetch('http://localhost:3000', {
+        method: 'POST',
+        body: name,
+      })
+          .then(res => res.json())
+          .then(card => {
+            if (!card.length) {
+              alert('您还没有填写调研问卷哦！')
+              return
+            }
+            nameBox.disabled = true
+            ;[...container.querySelectorAll('tr')].slice(1)
+                .forEach((tr, i) => [...tr.children].forEach((td, j) => {
+                  td.innerText = card[j * 5 + i]
+                }))
+            document.querySelector('#free').innerText = 'FREE'
+            document.querySelectorAll('td').forEach(td => {
+              td.addEventListener('click', function () {
+                this.style.background = this.style.background !== 'red' ? 'red' : 'white'
+              })
+            })
+          })
+    })
+  }
+</script>
+
+</body>
